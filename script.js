@@ -1,5 +1,3 @@
-place.addEventListener('focusout',search);
-
 function search(pos){
 
     let place;
@@ -14,7 +12,7 @@ function search(pos){
             'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
         }
     };
-    console.log(place)
+
     fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${place}`,options)
         .then(response => response.json())
         .then(response => show_results(response))
@@ -22,13 +20,21 @@ function search(pos){
 }
 
 const show_results = (response) => {
-    results = document.querySelector('.results');
-    img = document.querySelector('.icon');
-    results.innerHTML='';
+
+
+    let img = document.querySelector('.icon');
+    let temp = document.querySelector('.temp');
+    let status = document.querySelector('.status');
+    let time = document.querySelector('.time');
+    let local = document.querySelector('.local');
+
     console.log(response);
-    results.innerHTML+=response.current.temp_c;
-    results.innerHTML+=response.current.condition.text;
-    img.setAttribute('src',response.current.condition.icon)
+
+    temp.innerHTML=`${response.current.temp_c}<span class="celsius">ºC</span>`;
+    status.innerHTML=response.current.condition.text;
+    img.setAttribute('src', response.current.condition.icon);
+    local.innerHTML=`${response.location.name}, ${response.location.country}`;
+    time.innerHTML=response.location.localtime;
 }
 
 const local_weather = () => {
@@ -49,3 +55,4 @@ const local_weather = () => {
 }
 
 window.addEventListener('load',local_weather())
+place.addEventListener('focusout',search);

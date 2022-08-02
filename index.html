@@ -5,20 +5,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Now</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class = "main-content">
         <div class="wrapper-content">
-                <form>
-                    <label for="place">Search:</label>
-                    <input type="search" name="place" id="place" class="input">
-                </form>
-                <div class="results">
+            <form>
+                <label for="place">Search:</label>
+                <input type="search" name="place" id="place" class="input">
+            </form>
+            <div class="wrapper-local-time">
+                <h1 class="local">City</h1>
+                <p class="time">Time</p>
+            </div>
+            <div class="results">
+                <img src="//cdn.weatherapi.com/weather/64x64/day/116.png" alt="weather icon" class="icon">
+                <div class="wrapper-temp">
+                    <h1 class="temp">Temp.</h1>
                     <p class="status">Status</p>
-                    <img src="" alt="weather icon" class="icon">
-                    <h1 class="temp">Temp</h1>
                 </div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
