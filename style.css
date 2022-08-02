@@ -21,7 +21,7 @@ body, h1, a{
     border-radius: 5px;
     box-shadow: 30px 30px 40px -10px rgba(0, 0, 0, 0.15);
     background: rgba(255, 255, 255, 0.29);
-    width:25%;
+    max-width: 50%;
 }   
 .input{
     width:150px;
@@ -70,4 +70,5 @@ form label {
 
 .wrapper-local-time{
     margin: 20px 0;
+    max-width: 200px;
 }

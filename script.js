@@ -27,14 +27,24 @@ const show_results = (response) => {
     let status = document.querySelector('.status');
     let time = document.querySelector('.time');
     let local = document.querySelector('.local');
-
+    
+    let localTime = response.location.localtime;
+    
     console.log(response);
+    console.log(localTime);
+    console.log(localTime.length);
+
+   
+    let hourMinutes = localTime[11]+localTime[12]+':'+localTime[14]+localTime[15];
+    let date = localTime[5]+localTime[6]+'-'+localTime[8]+localTime[9]+'-'+localTime[0]+localTime[1]+localTime[2]+localTime[3];
+    console.log(hourMinutes);
+    console.log(date);
 
     temp.innerHTML=`${response.current.temp_c}<span class="celsius">ºC</span>`;
     status.innerHTML=response.current.condition.text;
     img.setAttribute('src', response.current.condition.icon);
     local.innerHTML=`${response.location.name}, ${response.location.country}`;
-    time.innerHTML=response.location.localtime;
+    time.innerHTML = `${date}<br>${hourMinutes}`
 }
 
 const local_weather = () => {
