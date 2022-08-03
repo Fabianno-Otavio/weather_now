@@ -43,14 +43,18 @@ form{
     position:relative;
 }
 
-.icon{
-    width:120px;
+.wrapper-temp{
+    display:inline-block;
+    margin-left:10px;
 }
 
 .results{
     display:flex;
     align-items: center;
-    transform:translateX(-15px);
+}
+
+.icon{
+    margin-left:calc(50% - 74px);
 }
 
 .temp{
@@ -66,7 +70,7 @@ form{
 }
 
 .status{
-    margin:5px 0 0 0;
+    margin:4px 0 0 0;
 }
 
 .time{
@@ -86,7 +90,7 @@ form{
     height:22px;
     cursor: pointer;
     border:none;
-    background-image: url(/assets/img/search-icon.png);
+    background-image: url(./assets/img/search-icon.png);
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 50%;

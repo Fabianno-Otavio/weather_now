@@ -39,7 +39,7 @@ function show_results (response) {
         i<10 ? date += localTime[i] :
         hourMinutes += localTime[i];   
     }
-
+    
     temp.innerHTML=`${response.current.temp_c}<span class="celsius">ºC</span>`;
     status.innerHTML=response.current.condition.text;
     img.setAttribute('src', response.current.condition.icon);
@@ -49,18 +49,18 @@ function show_results (response) {
 
 function addContent(){
     document.querySelector('.wrapper-all').innerHTML=`
-        <div class="wrapper-local-time">
-            <h1 class="local"></h1>
-            <p class="time"></p>
-        </div>
-        <div class="results">
-            <img alt="weather icon" class="icon">
-            <div class="wrapper-temp">
-                <h1 class="temp"></h1>
-                <p class="status"></p>
+            <div class="wrapper-local-time">
+                <h1 class="local"></h1>
+                <p class="time"></p>
             </div>
-        </div>
-`;
+            <div class="results">
+                <img alt="weather icon" class="icon">
+                <div class="wrapper-temp">
+                    <h1 class="temp"></h1>
+                    <p class="status"></p>
+                </div>
+            </div>
+    `;
 }
 
 function local_weather(){
@@ -92,3 +92,10 @@ document.querySelector('.use-location').addEventListener('change',()=>{
     document.querySelector('.input').value='';    
 })
 
+
+let content = document.querySelector('.wrapper-content');
+let divWrapper = document.createElement('div','');
+divWrapper.classList.add("wrapper-all")
+window.addEventListener('load',()=>{
+    content.appendChild(divWrapper);
+});
