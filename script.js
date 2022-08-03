@@ -1,9 +1,14 @@
-function search(pos){
+function activate(){
+    const checkbox = document.querySelector('.use-location');
+    const inputPlace = document.querySelector('.input').value;
+    if(checkbox.checked) {
+        local_weather();
+    } else {
+        search(inputPlace);
+    }
+}
 
-    let place;
-    let inputPlace = document.querySelector('.input').value;
-    inputPlace == '' ?  place = pos :
-                        place = inputPlace;
+function search(place){
 
     const options = {
         method: 'GET',
@@ -12,33 +17,28 @@ function search(pos){
             'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
         }
     };
-
+    
     fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${place}`,options)
         .then(response => response.json())
-        .then(response => show_results(response))
-
+        .then(response => show_results(response));
 }
 
-const show_results = (response) => {
+function show_results (response) {
 
+    addContent();
 
     let img = document.querySelector('.icon');
     let temp = document.querySelector('.temp');
     let status = document.querySelector('.status');
     let time = document.querySelector('.time');
     let local = document.querySelector('.local');
-    
     let localTime = response.location.localtime;
-    
-    console.log(response);
-    console.log(localTime);
-    console.log(localTime.length);
-
-   
-    let hourMinutes = localTime[11]+localTime[12]+':'+localTime[14]+localTime[15];
-    let date = localTime[5]+localTime[6]+'-'+localTime[8]+localTime[9]+'-'+localTime[0]+localTime[1]+localTime[2]+localTime[3];
-    console.log(hourMinutes);
-    console.log(date);
+    let hourMinutes ='';
+    let date='';
+    for(i in localTime){
+        i<10 ? date += localTime[i] :
+        hourMinutes += localTime[i];   
+    }
 
     temp.innerHTML=`${response.current.temp_c}<span class="celsius">ºC</span>`;
     status.innerHTML=response.current.condition.text;
@@ -47,7 +47,23 @@ const show_results = (response) => {
     time.innerHTML = `${date}<br>${hourMinutes}`
 }
 
-const local_weather = () => {
+function addContent(){
+    document.querySelector('.wrapper-all').innerHTML=`
+        <div class="wrapper-local-time">
+            <h1 class="local"></h1>
+            <p class="time"></p>
+        </div>
+        <div class="results">
+            <img alt="weather icon" class="icon">
+            <div class="wrapper-temp">
+                <h1 class="temp"></h1>
+                <p class="status"></p>
+            </div>
+        </div>
+`;
+}
+
+function local_weather(){
 
     navigator.geolocation.getCurrentPosition(success,error);
     
@@ -55,8 +71,7 @@ const local_weather = () => {
         lat = pos.coords.latitude;
         lng = pos.coords.longitude;
         res = `${lat},${lng}`;
-      //  console.log(res);
-        search(res)
+        search(res);
     };
 
     function error(){
@@ -64,5 +79,16 @@ const local_weather = () => {
     };
 }
 
-window.addEventListener('load',local_weather())
-place.addEventListener('focusout',search);
+function clear(){
+    document.querySelector('.wrapper-all').innerHTML=''
+}
+
+
+document.querySelector('.input').addEventListener('input',()=>{
+    checkbox.checked = false;
+});
+
+document.querySelector('.use-location').addEventListener('change',()=>{
+    document.querySelector('.input').value='';    
+})
+

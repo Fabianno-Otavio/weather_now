@@ -18,17 +18,12 @@
             <form>
                 <label for="place">Search:</label>
                 <input type="search" name="place" id="place" class="input">
+                <input type="button" name="button" id="search"  class="search-button" onclick="activate()">
+                <input type="checkbox" name="useLocation" id="checkbox" class="use-location"/>
+                <label for="checkbox" class="checkbox-label">Current location</label>
             </form>
-            <div class="wrapper-local-time">
-                <h1 class="local">City</h1>
-                <p class="time">Time</p>
-            </div>
-            <div class="results">
-                <img src="//cdn.weatherapi.com/weather/64x64/day/116.png" alt="weather icon" class="icon">
-                <div class="wrapper-temp">
-                    <h1 class="temp">Temp.</h1>
-                    <p class="status">Status</p>
-                </div>
+            <div class="wrapper-all">
+
             </div>
         </div>
     </div>
