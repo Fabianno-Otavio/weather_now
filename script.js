@@ -3,6 +3,7 @@ function activate(){
     const inputPlace = document.querySelector('.input');
 
     if(inputPlace.value == '' && !checkbox.checked){
+        clear();
         inputPlace.setAttribute('placeholder','Type a location here');
     } else if(checkbox.checked) {
         local_weather();
