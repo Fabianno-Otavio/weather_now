@@ -1,11 +1,15 @@
 function activate(){
     const checkbox = document.querySelector('.use-location');
-    const inputPlace = document.querySelector('.input').value;
-    if(checkbox.checked) {
+    const inputPlace = document.querySelector('.input');
+
+    if(inputPlace.value == '' && !checkbox.checked){
+        inputPlace.setAttribute('placeholder','Type a location here');
+    } else if(checkbox.checked) {
         local_weather();
     } else {
-        search(inputPlace);
+        search(inputPlace.value);
     }
+
 }
 
 function search(place){
@@ -18,9 +22,18 @@ function search(place){
         }
     };
     
+    let err = document.createElement('div','');
+    err.setAttribute('class','error');
+
+
     fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${place}`,options)
         .then(response => response.json())
-        .then(response => show_results(response));
+        .then(response => show_results(response))
+        .catch(() =>{
+            clear();
+            document.querySelector('.wrapper-all').appendChild(err);
+            err.innerHTML="INVALID LOCATION!<br> Please, be sure your input is in english<br> and it's a valid location.";
+        });
 }
 
 function show_results (response) {
@@ -39,7 +52,7 @@ function show_results (response) {
         i<10 ? date += localTime[i] :
         hourMinutes += localTime[i];   
     }
-    
+
     temp.innerHTML=`${response.current.temp_c}<span class="celsius">ºC</span>`;
     status.innerHTML=response.current.condition.text;
     img.setAttribute('src', response.current.condition.icon);

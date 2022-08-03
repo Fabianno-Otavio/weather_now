@@ -111,3 +111,11 @@ form{
     height:10px;
     margin:0;
 }
+
+.error{
+    color:red;
+    font-size:15px;
+    text-align: justify;
+    margin-top:15px;
+    font-weight: 700;
+}
