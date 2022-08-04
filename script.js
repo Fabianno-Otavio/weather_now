@@ -10,7 +10,6 @@ function activate(){
     } else {
         search(inputPlace.value);
     }
-
 }
 
 function search(place){
@@ -26,18 +25,59 @@ function search(place){
     let err = document.createElement('div','');
     err.setAttribute('class','error');
 
-
     fetch(`https://weatherapi-com.p.rapidapi.com/current.json?q=${place}`,options)
         .then(response => response.json())
-        .then(response => show_results(response))
-        .catch(() =>{
+        .then(response => getInfo(response,place))
+        .catch(()=>{
             clear();
             document.querySelector('.wrapper-all').appendChild(err);
             err.innerHTML="INVALID LOCATION!<br> Please, be sure your input is in english<br> and it's a valid location.";
         });
 }
 
-function show_results (response) {
+function getInfo(response,place){
+
+    let info = getDateHour(response);
+
+
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '68d65f336cmsh3d5ad9a9068b10fp178838jsn854471979028',
+            'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
+        }
+    };
+
+    fetch(`https://weatherapi-com.p.rapidapi.com/history.json?q=${place}&dt=${info[0]}&hour=${info[1]}`, options)
+        .then(response => response.json())
+        .then(response => show_results(response,place));
+
+}
+
+function getDateHour(response){
+
+    let date = '';
+    let hour = '';
+    
+    
+    for (i in response.location.localtime){
+        if(i<10){
+            date += response.location.localtime[i];
+        } else if (i<13) {
+            if (hour == 'now'){
+                hour += response.location.localtime[i] 
+            } else {
+                hour = 1;
+            }
+        }  
+    }
+    
+    return[date,hour];
+
+}
+
+async function show_results (response,place) {
 
     addContent();
 
@@ -46,6 +86,7 @@ function show_results (response) {
     let status = document.querySelector('.status');
     let time = document.querySelector('.time');
     let local = document.querySelector('.local');
+
     let localTime = response.location.localtime;
     let hourMinutes ='';
     let date='';
@@ -54,11 +95,52 @@ function show_results (response) {
         hourMinutes += localTime[i];   
     }
 
-    temp.innerHTML=`${response.current.temp_c}<span class="celsius">ºC</span>`;
-    status.innerHTML=response.current.condition.text;
-    img.setAttribute('src', response.current.condition.icon);
+    let dayInfo = response.forecast.forecastday[0].day;
+    let hourInfo = response.forecast.forecastday[0].hour[0];
+
+    temp.innerHTML=`${hourInfo.temp_c}<span class="celsius">ºC</span>`;
+    status.innerHTML=dayInfo.condition.text;
+    img.setAttribute('src', dayInfo.condition.icon);
     local.innerHTML=`${response.location.name}, ${response.location.country}`;
     time.innerHTML = `${date}<br>${hourMinutes}`
+
+
+    for(i=0;i<5;i++){
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': '68d65f336cmsh3d5ad9a9068b10fp178838jsn854471979028',
+                'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
+            }
+        };
+
+        await fetch(`https://weatherapi-com.p.rapidapi.com/history.json?q=${place}&dt=2022-08-03&hour=${[i]}`, options)
+        .then(response => response.json())
+        .then(response => addInfoHours(response, i))
+}
+        
+}
+
+function addInfoHours(response, i){
+
+    let today = document.querySelector('.today');
+    let hourInfo = response.forecast.forecastday[0].hour[0];
+    let dayInfo = response.forecast.forecastday[0].day;
+
+    today.innerHTML += `<div class="wrapper-hour">
+                            <img class="iconHour -${i}" src="${hourInfo.condition.icon}">
+                            <div class="wrapper-text">
+                                <p class="tempHour -${i}">${hourInfo.temp_c}<span> ºC </span></p>
+                                <p class="statusHour -${i}">${hourInfo.condition.text}</p>
+                            </div>
+                        </div>`
+
+    
+    //let statusHour = document.querySelector(`.statusHour .-${i}`);
+    //let iconHour = document.querySelector(`.iconHour .-${i}`);
+    //let tempHour = document.querySelector(`.tempHour .-${i}`);
+
+    
 }
 
 function addContent(){
@@ -73,7 +155,10 @@ function addContent(){
                     <h1 class="temp"></h1>
                     <p class="status"></p>
                 </div>
+                <p class="min"></p>
+                <p class="max"></p>
             </div>
+            <div class="today"></div>
     `;
 }
 
