@@ -12,16 +12,9 @@ function activate(){
     }
 }
 
+
 function search(place){
 
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': '68d65f336cmsh3d5ad9a9068b10fp178838jsn854471979028',
-            'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
-        }
-    };
-    
     let err = document.createElement('div','');
     err.setAttribute('class','error');
 
@@ -39,16 +32,6 @@ function getInfo(response,place){
 
     let info = getDateHour(response);
 
-
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': '68d65f336cmsh3d5ad9a9068b10fp178838jsn854471979028',
-            'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
-        }
-    };
-
     fetch(`https://weatherapi-com.p.rapidapi.com/history.json?q=${place}&dt=${info[0]}&hour=${info[1]}`, options)
         .then(response => response.json())
         .then(response => show_results(response,place));
@@ -58,8 +41,7 @@ function getInfo(response,place){
 function getDateHour(response){
 
     let date = '';
-    let hour = '';
-    
+    let hour = ''; 
     
     for (i in response.location.localtime){
         if(i<10){
@@ -89,12 +71,14 @@ async function show_results (response,place) {
 
     let localTime = response.location.localtime;
     let hourMinutes ='';
+    
     let date='';
     for(i in localTime){
         i<10 ? date += localTime[i] :
         hourMinutes += localTime[i];   
     }
 
+    let hour = parseInt(`${hourMinutes[1]}${hourMinutes[2]}`);
     let dayInfo = response.forecast.forecastday[0].day;
     let hourInfo = response.forecast.forecastday[0].hour[0];
 
@@ -104,8 +88,10 @@ async function show_results (response,place) {
     local.innerHTML=`${response.location.name}, ${response.location.country}`;
     time.innerHTML = `${date}<br>${hourMinutes}`
 
+    let t;
+    window.innerWidth<=414 ? t=1 :  t = 2;
 
-    for(i=0;i<5;i++){
+    for(i=hour-t;i<=hour+t;i++){
         const options = {
             method: 'GET',
             headers: {
@@ -128,6 +114,7 @@ function addInfoHours(response, i){
     let dayInfo = response.forecast.forecastday[0].day;
 
     today.innerHTML += `<div class="wrapper-hour">
+                            <h1 class="hours">${i}:00</h1>
                             <img class="iconHour -${i}" src="${hourInfo.condition.icon}">
                             <div class="wrapper-text">
                                 <p class="tempHour -${i}">${hourInfo.temp_c}<span> ºC </span></p>
@@ -198,3 +185,11 @@ divWrapper.classList.add("wrapper-all")
 window.addEventListener('load',()=>{
     content.appendChild(divWrapper);
 });
+
+const options = {
+    method: 'GET',
+    headers: {
+        'X-RapidAPI-Key': '68d65f336cmsh3d5ad9a9068b10fp178838jsn854471979028',
+        'X-RapidAPI-Host': 'weatherapi-com.p.rapidapi.com'
+    }
+};

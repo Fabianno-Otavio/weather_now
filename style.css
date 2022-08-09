@@ -14,14 +14,11 @@ body, h1, a{
 }
 .wrapper-content{
     font-family:'Quicksand', sans-serif;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
     padding: 25px;
     border-radius: 5px;
     box-shadow: 30px 30px 40px -10px rgba(0, 0, 0, 0.15);
     background: rgba(255, 255, 255, 0.29);
-    max-width: 70vw;
+    max-width: 90%;
 }   
 .input{
     margin-top:10px;
@@ -80,13 +77,13 @@ form{
 
 .wrapper-local-time{
     margin: 20px 0;
-    width:100%;
+    max-width:100%;
 }
 
 .search-button{
     position:absolute;
     top:42.5px;
-    right:1.5px;
+    right:5px;
     width:22px;
     height:22px;
     cursor: pointer;
@@ -94,9 +91,7 @@ form{
     background-image: url(./assets/img/search-icon.png);
     background-repeat: no-repeat;
     background-position: center;
-    border-radius: 50%;
-    border:1px solid black;
-    background-color: #c4bfbf;
+    background-color: transparent;
 }
 
 .search-button:hover{
@@ -124,25 +119,27 @@ form{
 .wrapper-hour{
     display:flex;
     align-items: center;
+    flex-direction: column;
 }
 
 .today{
     margin-top:50px;
     display:flex;
     max-width:500px;
+    justify-content: space-between;
+    background-color: rgba(256,256,256, 0.1);
+    border-radius: 5px;
+    padding:20px 5px;
 }
 
-.tempHour{
-    display:flex;
+.wrapper-text{
+    text-align: center;
+}
+
+.tempHour, .statusHour{
     margin:0;
 }
 
-.iconHour{
-    background-color:antiquewhite;
-}
-.statusHour{
-    margin-top:10px;
-}
-.wrapper-text{
-    height:64px;
+.hours{
+    font-size: 20px;
 }
