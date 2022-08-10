@@ -62,23 +62,36 @@ function getDateHour(response){
 async function show_results (response,place) {
 
     addContent();
-
+    
     let img = document.querySelector('.icon');
     let temp = document.querySelector('.temp');
     let status = document.querySelector('.status');
     let time = document.querySelector('.time');
     let local = document.querySelector('.local');
+    let minmax = document.querySelector('.minmax');
 
     let localTime = response.location.localtime;
-    let hourMinutes ='';
-    
-    let date='';
-    for(i in localTime){
-        i<10 ? date += localTime[i] :
-        hourMinutes += localTime[i];   
+
+    let dateDay = localTime[8] + localTime[9];
+    let dateMonth = localTime[5] + localTime[6];
+    let dateYear = localTime[0] + localTime[1] + localTime[2]+localTime[3];
+  
+    let date=`${dateYear}-${dateMonth}-${dateDay}`;
+
+    let monthLength = [];
+
+    let hourString;
+    let hourMinutes;
+
+    if(localTime[12]==":"){
+        hourString = '0'+localTime[11];
+        hourMinutes = hourString+localTime[12]+localTime[13]+localTime[14];
+    } else {
+        hourString = localTime[11]+localTime[12];
+        hourMinutes = hourString+localTime[13]+localTime[14]+localTime[15];
     }
 
-    let hour = parseInt(`${hourMinutes[1]}${hourMinutes[2]}`);
+    let hour = parseInt(`${hourString}`);
     let dayInfo = response.forecast.forecastday[0].day;
     let hourInfo = response.forecast.forecastday[0].hour[0];
 
@@ -86,12 +99,14 @@ async function show_results (response,place) {
     status.innerHTML=dayInfo.condition.text;
     img.setAttribute('src', dayInfo.condition.icon);
     local.innerHTML=`${response.location.name}, ${response.location.country}`;
-    time.innerHTML = `${date}<br>${hourMinutes}`
+    time.innerHTML = `${date}<br>${hourMinutes}`;
+    minmax.innerHTML=`${dayInfo.maxtemp_c}ºC/${dayInfo.mintemp_c}ºC`;
 
     let t;
     window.innerWidth<=414 ? t=1 :  t = 2;
 
     for(i=hour-t;i<=hour+t;i++){
+
         const options = {
             method: 'GET',
             headers: {
@@ -100,33 +115,45 @@ async function show_results (response,place) {
             }
         };
 
-        await fetch(`https://weatherapi-com.p.rapidapi.com/history.json?q=${place}&dt=2022-08-03&hour=${[i]}`, options)
+
+        let hourRel;
+
+        if (i >= 24){
+            hourRel = i-24;
+            date=`${dateYear}-${dateMonth}-${Number(dateDay)+1}`;
+        } else if(i<0){
+            hourRel = i+24;
+            date=`${dateYear}-${dateMonth}-${Number(dateDay)-1}`;
+        } else {
+            hourRel=i;
+        }
+        
+        await fetch(`https://weatherapi-com.p.rapidapi.com/history.json?q=${place}&dt=${date}&hour=${hourRel}`, options)
         .then(response => response.json())
-        .then(response => addInfoHours(response, i))
+        .then(response => addInfoHours(response, hourRel, hour))
+    
+        date=`${dateYear}-${dateMonth}-${dateDay}`;
 }
         
 }
 
-function addInfoHours(response, i){
-
+function addInfoHours(response, i, hour){
+    console.log(response)
     let today = document.querySelector('.today');
     let hourInfo = response.forecast.forecastday[0].hour[0];
-    let dayInfo = response.forecast.forecastday[0].day;
+    let hourString = `${i}:00`
+    if(i==hour){
+        hourString='Now';
+    }
 
     today.innerHTML += `<div class="wrapper-hour">
-                            <h1 class="hours">${i}:00</h1>
-                            <img class="iconHour -${i}" src="${hourInfo.condition.icon}">
+                            <h1 class="hours">${hourString}</h1>
+                            <img class="iconHour" src="${hourInfo.condition.icon}">
                             <div class="wrapper-text">
-                                <p class="tempHour -${i}">${hourInfo.temp_c}<span> ºC </span></p>
-                                <p class="statusHour -${i}">${hourInfo.condition.text}</p>
+                                <p class="tempHour">${hourInfo.temp_c}<span> ºC </span></p>
+                                <p class="statusHour">${hourInfo.condition.text}</p>
                             </div>
                         </div>`
-
-    
-    //let statusHour = document.querySelector(`.statusHour .-${i}`);
-    //let iconHour = document.querySelector(`.iconHour .-${i}`);
-    //let tempHour = document.querySelector(`.tempHour .-${i}`);
-
     
 }
 
@@ -142,9 +169,9 @@ function addContent(){
                     <h1 class="temp"></h1>
                     <p class="status"></p>
                 </div>
-                <p class="min"></p>
-                <p class="max"></p>
             </div>
+            <p class="maxmintxt">Max&nbsp&nbsp&nbspMin</p>
+            <p class="minmax"></p>
             <div class="today"></div>
     `;
 }
