@@ -72,17 +72,9 @@ async function show_results (response,place) {
 
     let localTime = response.location.localtime;
 
-    let dateDay = localTime[8] + localTime[9];
-    let dateMonth = localTime[5] + localTime[6];
-    let dateYear = localTime[0] + localTime[1] + localTime[2]+localTime[3];
-  
-    let date=`${dateYear}-${dateMonth}-${dateDay}`;
-
-    let monthLength = [];
-
     let hourString;
-    let hourMinutes;
-
+    let hourMinutes;    
+    
     if(localTime[12]==":"){
         hourString = '0'+localTime[11];
         hourMinutes = hourString+localTime[12]+localTime[13]+localTime[14];
@@ -95,6 +87,8 @@ async function show_results (response,place) {
     let dayInfo = response.forecast.forecastday[0].day;
     let hourInfo = response.forecast.forecastday[0].hour[0];
 
+    let date=checkDate(hour,response);
+
     temp.innerHTML=`${hourInfo.temp_c}<span class="celsius">ºC</span>`;
     status.innerHTML=dayInfo.condition.text;
     img.setAttribute('src', dayInfo.condition.icon);
@@ -104,6 +98,64 @@ async function show_results (response,place) {
 
     let t;
     window.innerWidth<=414 ? t=1 :  t = 2;
+
+    function checkDate(i,response){
+
+        let daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+        let localTime = response.location.localtime;
+
+        let dateDay = Number(localTime[8]+localTime[9]);
+        let dateMonth = Number(localTime[5]+localTime[6]);
+        let dateYear = Number(localTime[0]+localTime[1]+localTime[2]+localTime[3]);
+
+        if(dateYear%4==0){
+            daysInMonth[1]=29;
+        };
+    
+        if (i>=24){
+            if(dateDay==daysInMonth[dateMonth-1]){
+                if(dateMonth == 12){
+                    dateYear++;
+                    dateMonth = 1;
+                    dateDay = 1;
+                } else {
+                    dateMonth++;
+                }
+            } else {
+                dateDay++;
+            }
+        };
+
+        if(i<0){
+            if(dateDay-1==0){
+                if(dateMonth-1==0){
+                    dateYear--;
+                    dateMonth=12;
+                    dateDay=daysInMonth[11];
+                } else {
+                    dateMonth--;
+                    dateDay=daysInMonth[dateMonth-2];
+                } 
+            }else{
+                dateDay--;
+            }
+        }
+
+        dateYear.toString();
+        dateMonth.toString();
+        dateDay.toString();
+
+        if(dateMonth<10){
+            dateMonth='0'+dateMonth;
+        }
+
+        if(dateDay<10){
+            dateDay='0'+dateDay;
+        }
+
+        return `${dateYear}-${dateMonth}-${dateDay}`;
+    }
 
     for(i=hour-t;i<=hour+t;i++){
 
@@ -115,30 +167,28 @@ async function show_results (response,place) {
             }
         };
 
-
         let hourRel;
 
         if (i >= 24){
             hourRel = i-24;
-            date=`${dateYear}-${dateMonth}-${Number(dateDay)+1}`;
         } else if(i<0){
             hourRel = i+24;
-            date=`${dateYear}-${dateMonth}-${Number(dateDay)-1}`;
         } else {
             hourRel=i;
         }
+
+        date = checkDate(i, response);
+        
+        console.log(date)
         
         await fetch(`https://weatherapi-com.p.rapidapi.com/history.json?q=${place}&dt=${date}&hour=${hourRel}`, options)
         .then(response => response.json())
-        .then(response => addInfoHours(response, hourRel, hour))
+        .then(response => addInfoHours(response, hourRel, hour));
     
-        date=`${dateYear}-${dateMonth}-${dateDay}`;
-}
-        
+    };   
 }
 
 function addInfoHours(response, i, hour){
-    console.log(response)
     let today = document.querySelector('.today');
     let hourInfo = response.forecast.forecastday[0].hour[0];
     let hourString = `${i}:00`
@@ -153,7 +203,7 @@ function addInfoHours(response, i, hour){
                                 <p class="tempHour">${hourInfo.temp_c}<span> ºC </span></p>
                                 <p class="statusHour">${hourInfo.condition.text}</p>
                             </div>
-                        </div>`
+                        </div>`;
     
 }
 
@@ -193,7 +243,7 @@ function local_weather(){
 }
 
 function clear(){
-    document.querySelector('.wrapper-all').innerHTML=''
+    document.querySelector('.wrapper-all').innerHTML='';
 }
 
 
